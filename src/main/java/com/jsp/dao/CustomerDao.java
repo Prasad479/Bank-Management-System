@@ -18,21 +18,21 @@ public class CustomerDao {
 	EntityTransaction entityTransaction = entityManager.getTransaction();
 
 	//save customer
-	public CustomerDto saveCustomer(CustomerDto customer, int bankManagerId) {
-		BankManagerDto b = entityManager.find(BankManagerDto.class, bankManagerId);
-		if(b!=null) {
-		if (b.getStatus().equals("Approved")) {
+	public CustomerDto saveCustomer(CustomerDto customer) {
+		String sql = "Select c from CustomerDto c";
+		Query query = entityManager.createQuery(sql);
+		List<CustomerDto> customers = query.getResultList();
+		for(CustomerDto c:customers) {
+			if(c.getAddharCardNo()==customer.getAddharCardNo()) {
+				System.out.println("Customer already exist");
+				return null;
+			}
+		}
 			customer.setStatus("Unapproved");
 			entityTransaction.begin();
 			entityManager.persist(customer);
 			entityTransaction.commit();
 			System.out.println("Customer saved successfully");
-		} else {
-			System.out.println("BankManager is not Approved");
-		}
-		}else {
-			System.out.println("BankManager not exist");
-		}
 		return customer;
 	}
 
@@ -123,6 +123,7 @@ public class CustomerDao {
 		CustomerDto c = entityManager.find(CustomerDto.class, customerId);
 		if (c.getStatus().equals("Approved")) {
 			bankAccount.setCustomer(c);
+			bankAccount.setAccount_no(147949000+customerId);     //For unique account number  
 			entityTransaction.begin();
 			entityManager.persist(bankAccount);
 			entityTransaction.commit();
@@ -163,20 +164,19 @@ public class CustomerDao {
 
 	//get all bankAccounts details
 	public List<BankAccountDto> getAllBankAccounts() {
-		String sql = "select b from BankAccountDto b";
+		String sql = "Select b from BankAccountDto b";
 		Query query = entityManager.createQuery(sql);
-		List<BankAccountDto> bankAccounts = query.getResultList();
-
-		for (BankAccountDto b : bankAccounts) {
-			System.out.println("=================");
+		List<BankAccountDto> bankAccountDto = query.getResultList();
+		for(BankAccountDto b: bankAccountDto) {
+			System.out.println("=====================");
 			System.out.println(b.getId());
 			System.out.println(b.getAccount_no());
 			System.out.println(b.getIfsc_code());
 			System.out.println(b.getBalance());
 		}
-		return bankAccounts;
+		return bankAccountDto;
 	}
-
+	
 	//deposit amount
 	public BankAccountDto depositAmount(int customerId, int bankAccountId, double amount) {
 		CustomerDto c = entityManager.find(CustomerDto.class, customerId);
@@ -246,26 +246,5 @@ public class CustomerDao {
 			System.out.println("Customer is not approved");
 		}
 		return b1;
-	}
-
-	//get particular customer bankAccounts
-	public List<BankAccountDto> getCustomersBankAccounts(int customerId) {
-		String sql = "select b from BankAccountDto b";
-		Query query = entityManager.createQuery(sql);
-		List<BankAccountDto> bankAccounts = query.getResultList();
-
-		for (BankAccountDto b : bankAccounts) {
-			if (b.getCustomer().getId() == customerId) {
-				System.out.println("=================");
-				System.out.println(b.getId());
-				System.out.println(b.getAccount_no());
-				System.out.println(b.getIfsc_code());
-				System.out.println(b.getBalance());
-			} else {
-				System.out.println("You not have BankAccounts");
-				break;
-			}
-		}
-		return bankAccounts;
 	}
 }

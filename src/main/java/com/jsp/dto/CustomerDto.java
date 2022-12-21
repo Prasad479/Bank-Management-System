@@ -1,6 +1,5 @@
 package com.jsp.dto;
 
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,7 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -21,9 +19,7 @@ public class CustomerDto {
 	private String gmail;
 	private long cno;
 	private String status;
-
-	@OneToMany(mappedBy = "customer")
-	private List<BankAccountDto> bankAccount;
+	private long AddharCardNo;
 
 	@ManyToOne
 	@JoinColumn
@@ -77,11 +73,11 @@ public class CustomerDto {
 		this.status = status;
 	}
 
-	public List<BankAccountDto> getBankAccount() {
-		return bankAccount;
+	public long getAddharCardNo() {
+		return AddharCardNo;
 	}
 
-	public void setBankAccount(List<BankAccountDto> bankAccount) {
-		this.bankAccount = bankAccount;
+	public void setAddharCardNo(long addharCardNo) {
+		AddharCardNo = addharCardNo;
 	}
 }

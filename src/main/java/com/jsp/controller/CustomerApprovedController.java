@@ -12,6 +12,6 @@ public class CustomerApprovedController {
 		
 		//For approved particular customer
 		//Enter the customerId and bankManagerId
-		bankManagerService.approvedCustomer(1, 2);
+		bankManagerService.approvedCustomer(3, 3);
 	}
 }

@@ -10,8 +10,8 @@ public class CustomerService {
 
 	CustomerDao customerDao = new CustomerDao();
 
-	public CustomerDto saveCustomer(CustomerDto customer, int bankManagerId) {
-		return customerDao.saveCustomer(customer, bankManagerId);
+	public CustomerDto saveCustomer(CustomerDto customer) {
+		return customerDao.saveCustomer(customer);
 	}
 
 	public CustomerDto deleteCustomer(int id) {
@@ -53,7 +53,7 @@ public class CustomerService {
 	public List<BankAccountDto> getAllBankAccounts() {
 		return customerDao.getAllBankAccounts();
 	}
-
+	
 	public BankAccountDto depositAmount(int customerId, int bankAccountId, double amount) {
 		return customerDao.depositAmount(customerId, bankAccountId, amount);
 	}
@@ -64,9 +64,5 @@ public class CustomerService {
 
 	public BankAccountDto transferAmount(int customerId, int creditorId, int depositorId, double amount) {
 		return customerDao.transferAmount(customerId, creditorId, depositorId, amount);
-	}
-	
-	public List<BankAccountDto> getCustomersBankAccounts(int customerId){
-		return customerDao.getCustomersBankAccounts(customerId);
 	}
 }

@@ -7,6 +7,6 @@ public class TransferAmountController {
 		CustomerService customerService=new CustomerService();
 		
 		//Enter the customerId, creditorId, depositorId and amount
-		customerService.transferAmount(1, 1, 2, 500);
+		customerService.transferAmount(2, 1, 3, 1000);
 	}
 }	

@@ -1,6 +1,5 @@
 package com.jsp.controller;
 
-import com.jsp.dto.AdminDto;
 import com.jsp.dto.CustomerDto;
 import com.jsp.service.CustomerService;
 
@@ -19,10 +18,12 @@ public class CustomerSaveController {
 		
 		//Enter the customer contact number
 		customer.setCno(1234567890);
+		
+		//Enter the aadhar card number
+		customer.setAddharCardNo(297978920041l);
 
 		CustomerService customerService =new CustomerService();
 		
-		//Enter the customer and bankManagerId
-		customerService.saveCustomer(customer,2);
+		customerService.saveCustomer(customer);
 	}
 }

@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -18,10 +19,9 @@ public class BankAccountDto {
 	private String ifsc_code;
 	private double balance;
 
-	@ManyToOne
-	@JoinColumn
+	@OneToOne
 	private CustomerDto customer;
-
+	
 	public int getId() {
 		return id;
 	}
@@ -29,7 +29,7 @@ public class BankAccountDto {
 	public void setId(int id) {
 		this.id = id;
 	}
-
+	
 	public long getAccount_no() {
 		return account_no;
 	}

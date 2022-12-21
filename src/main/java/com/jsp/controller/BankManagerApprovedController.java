@@ -11,6 +11,6 @@ public class BankManagerApprovedController {
 		
 		
 		//Enter the bankManager id and admin id for approve particular bankManager
-		adminService.approvedBankManager(18,50);	  
+		adminService.approvedBankManager(3,2);	  
 	}
 }
