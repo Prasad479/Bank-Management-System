@@ -9,34 +9,36 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import com.jsp.dto.BankAccountDto;
-import com.jsp.dto.BankManagerDto;
 import com.jsp.dto.CustomerDto;
+import com.jsp.dto.StatementDto;
 
 public class CustomerDao {
 	EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("prasad");
 	EntityManager entityManager = entityManagerFactory.createEntityManager();
 	EntityTransaction entityTransaction = entityManager.getTransaction();
 
-	//save customer
+	StatementDto statement = new StatementDto();
+
+	// save customer
 	public CustomerDto saveCustomer(CustomerDto customer) {
 		String sql = "Select c from CustomerDto c";
 		Query query = entityManager.createQuery(sql);
 		List<CustomerDto> customers = query.getResultList();
-		for(CustomerDto c:customers) {
-			if(c.getAddharCardNo()==customer.getAddharCardNo()) {
+		for (CustomerDto c : customers) {
+			if (c.getAddharCardNo() == customer.getAddharCardNo()) {
 				System.out.println("Customer already exist");
 				return null;
 			}
 		}
-			customer.setStatus("Unapproved");
-			entityTransaction.begin();
-			entityManager.persist(customer);
-			entityTransaction.commit();
-			System.out.println("Customer saved successfully");
+		customer.setStatus("Unapproved");
+		entityTransaction.begin();
+		entityManager.persist(customer);
+		entityTransaction.commit();
+		System.out.println("Customer saved successfully");
 		return customer;
 	}
 
-	//delete customer
+	// delete customer
 	public CustomerDto deleteCustomer(int id) {
 		CustomerDto c = entityManager.find(CustomerDto.class, id);
 		if (c != null) {
@@ -50,7 +52,7 @@ public class CustomerDao {
 		return c;
 	}
 
-	//update customer name
+	// update customer name
 	public CustomerDto updateCustomerName(int id, String name) {
 		CustomerDto c = entityManager.find(CustomerDto.class, id);
 		c.setName(name);
@@ -62,7 +64,7 @@ public class CustomerDao {
 		return c;
 	}
 
-	//update customer gmail
+	// update customer gmail
 	public CustomerDto updateCustomerGmail(int id, String Gmail) {
 		CustomerDto c = entityManager.find(CustomerDto.class, id);
 		c.setGmail(Gmail);
@@ -74,7 +76,7 @@ public class CustomerDao {
 		return c;
 	}
 
-	//update customer contact number
+	// update customer contact number
 	public CustomerDto updateCustomerCno(int id, long cno) {
 		CustomerDto c = entityManager.find(CustomerDto.class, id);
 		c.setCno(cno);
@@ -86,7 +88,7 @@ public class CustomerDao {
 		return c;
 	}
 
-	//get particular customer details
+	// get particular customer details
 	public CustomerDto getCustomer(int id) {
 		CustomerDto c = entityManager.find(CustomerDto.class, id);
 		if (c != null) {
@@ -101,7 +103,7 @@ public class CustomerDao {
 		return c;
 	}
 
-	//get all customers details
+	// get all customers details
 	public List<CustomerDto> getAllCustomer() {
 		String sql = "Select c from CustomerDto c";
 		Query query = entityManager.createQuery(sql);
@@ -118,23 +120,37 @@ public class CustomerDao {
 		return customers;
 	}
 
-	//save bankAccount
+	// save bankAccount
 	public BankAccountDto saveBankAccount(BankAccountDto bankAccount, int customerId) {
 		CustomerDto c = entityManager.find(CustomerDto.class, customerId);
+		bankAccount.setCustomer(c);
+		bankAccount.setAccount_no(147949000 + customerId); // For unique account number
+
+		String sql = "Select b from BankAccountDto b";
+		Query query = entityManager.createQuery(sql);
+		List<BankAccountDto> bankAccountDto = query.getResultList();
+		for (BankAccountDto b : bankAccountDto) {
+			if (b.getAccount_no() == bankAccount.getAccount_no()) {
+				System.out.println("BankAccount already exist for this customer");
+				return null;
+			}
+		}
 		if (c.getStatus().equals("Approved")) {
-			bankAccount.setCustomer(c);
-			bankAccount.setAccount_no(147949000+customerId);     //For unique account number  
-			entityTransaction.begin();
-			entityManager.persist(bankAccount);
-			entityTransaction.commit();
-			System.out.println("BankAccount added Successfully");
+			if (bankAccount.getBalance() > 499) {
+				entityTransaction.begin();
+				entityManager.persist(bankAccount);
+				entityTransaction.commit();
+				System.out.println("BankAccount added Successfully");
+			}else {
+				System.out.println("Minimum 500 should be deposit for create bankAccount");
+			}
 		} else {
 			System.out.println("Customer is not Approved");
 		}
 		return bankAccount;
 	}
 
-	//delete bankAccount
+	// delete bankAccount
 	public BankAccountDto deleteBankAccount(int id) {
 		BankAccountDto b = entityManager.find(BankAccountDto.class, id);
 		if (b != null) {
@@ -148,7 +164,7 @@ public class CustomerDao {
 		return b;
 	}
 
-	//get particular bankAccount details
+	// get particular bankAccount details
 	public BankAccountDto getBankAccount(int id) {
 		BankAccountDto b = entityManager.find(BankAccountDto.class, id);
 		if (b != null) {
@@ -162,12 +178,12 @@ public class CustomerDao {
 		return b;
 	}
 
-	//get all bankAccounts details
+	// get all bankAccounts details
 	public List<BankAccountDto> getAllBankAccounts() {
 		String sql = "Select b from BankAccountDto b";
 		Query query = entityManager.createQuery(sql);
 		List<BankAccountDto> bankAccountDto = query.getResultList();
-		for(BankAccountDto b: bankAccountDto) {
+		for (BankAccountDto b : bankAccountDto) {
 			System.out.println("=====================");
 			System.out.println(b.getId());
 			System.out.println(b.getAccount_no());
@@ -176,16 +192,20 @@ public class CustomerDao {
 		}
 		return bankAccountDto;
 	}
-	
-	//deposit amount
+
+	// deposit amount
 	public BankAccountDto depositAmount(int customerId, int bankAccountId, double amount) {
 		CustomerDto c = entityManager.find(CustomerDto.class, customerId);
 		BankAccountDto b = entityManager.find(BankAccountDto.class, bankAccountId);
 		if (c.getStatus().equals("Approved")) {
 			if (amount > 0) {
 				b.setBalance(b.getBalance() + amount);
+				statement.setBid(bankAccountId);
+				statement.setDetails("Deposited : Rs." + amount + " to your Account no:" + b.getAccount_no());
+
 				entityTransaction.begin();
 				entityManager.merge(b);
+				entityManager.persist(statement);
 				entityTransaction.commit();
 				System.out.println("Amount deposited successfully");
 			} else {
@@ -197,19 +217,23 @@ public class CustomerDao {
 		return b;
 	}
 
-	//credit amount
+	// credit amount
 	public BankAccountDto creditAmount(int customerId, int bankAccountId, double amount) {
 		CustomerDto c = entityManager.find(CustomerDto.class, customerId);
 		BankAccountDto b = entityManager.find(BankAccountDto.class, bankAccountId);
 		if (c.getStatus().equals("Approved")) {
 			if (b.getCustomer().getId() == customerId) {
-				if(amount < b.getBalance() && amount > 0 ) {
-				b.setBalance(b.getBalance() - amount);
-				entityTransaction.begin();
-				entityManager.merge(b);
-				entityTransaction.commit();
-				System.out.println("Amount credited successfully");
-				}else {
+				if (amount < b.getBalance() && amount > 0) {
+					b.setBalance(b.getBalance() - amount);
+					statement.setBid(bankAccountId);
+					statement.setDetails("Credited : Rs." + amount + " from your Account no:" + b.getAccount_no());
+
+					entityTransaction.begin();
+					entityManager.merge(b);
+					entityManager.persist(statement);
+					entityTransaction.commit();
+					System.out.println("Amount credited successfully");
+				} else {
 					System.out.println("Invalid amount");
 				}
 			} else {
@@ -221,22 +245,31 @@ public class CustomerDao {
 		return b;
 	}
 
-	//transfer amount
+	// transfer amount
 	public BankAccountDto transferAmount(int customerId, int creditorId, int depositorId, double amount) {
 		CustomerDto c = entityManager.find(CustomerDto.class, customerId);
 		BankAccountDto b1 = entityManager.find(BankAccountDto.class, creditorId);
 		BankAccountDto b2 = entityManager.find(BankAccountDto.class, depositorId);
 		if (c.getStatus().equals("Approved")) {
 			if (b1.getCustomer().getId() == customerId) {
-				if(amount > 0 && b1.getBalance() > amount ) {
-				b2.setBalance(b2.getBalance() + amount);
-				b1.setBalance(b1.getBalance() - amount);
-				entityTransaction.begin();
-				entityManager.merge(b1);
-				entityManager.merge(b2);
-				entityTransaction.commit();
-				System.out.println("Amount transfer successfully");
-				}else {
+				if (amount > 0 && b1.getBalance() > amount) {
+					b1.setBalance(b1.getBalance() - amount);
+					statement.setBid(creditorId);
+					statement.setDetails("Credited  : Rs." + amount + " from your Account no:" + b1.getAccount_no());
+
+					b2.setBalance(b2.getBalance() + amount);
+					StatementDto statement1 = new StatementDto();
+					statement1.setBid(depositorId);
+					statement1.setDetails("Deposited : Rs." + amount + " by Account no :" + b1.getAccount_no());
+
+					entityTransaction.begin();
+					entityManager.merge(b1);
+					entityManager.merge(b2);
+					entityManager.persist(statement);
+					entityManager.persist(statement1);
+					entityTransaction.commit();
+					System.out.println("Amount transfer successfully");
+				} else {
 					System.out.println("Invalid amount");
 				}
 			} else {
@@ -246,5 +279,20 @@ public class CustomerDao {
 			System.out.println("Customer is not approved");
 		}
 		return b1;
+	}
+
+	// statement of bankAccounts
+	public List<StatementDto> bankAccountStatement(int bankAccountId) {
+		String sql = "Select s from StatementDto s";
+		Query query = entityManager.createQuery(sql);
+
+		List<StatementDto> s = query.getResultList();
+		System.out.println("Statement of BankAccount Id : "+bankAccountId);
+		for (StatementDto res : s) {
+			if (bankAccountId == res.getBid()) {
+				System.out.println(res.getDetails());
+			}
+		}
+		return s;
 	}
 }

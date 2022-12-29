@@ -5,6 +5,7 @@ import java.util.List;
 import com.jsp.dao.CustomerDao;
 import com.jsp.dto.BankAccountDto;
 import com.jsp.dto.CustomerDto;
+import com.jsp.dto.StatementDto;
 
 public class CustomerService {
 
@@ -64,5 +65,9 @@ public class CustomerService {
 
 	public BankAccountDto transferAmount(int customerId, int creditorId, int depositorId, double amount) {
 		return customerDao.transferAmount(customerId, creditorId, depositorId, amount);
+	}
+	
+	public List<StatementDto> bankAccountStatement(int bankAccountId) {
+		return customerDao.bankAccountStatement(bankAccountId);
 	}
 }

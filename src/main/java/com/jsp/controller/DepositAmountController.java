@@ -7,6 +7,6 @@ public class DepositAmountController {
 		CustomerService customerService=new CustomerService();
 		
 		//Enter the customerId , bankAccountId and amount
-		customerService.depositAmount(3, 1, 9110);
+		customerService.depositAmount(2, 5, 1000);
 	}
 }

@@ -7,6 +7,6 @@ public class CreditAmountController {
 		CustomerService customerService=new CustomerService();
 		
 		//Enter the customerId , bankAccountId and amount
-		customerService.creditAmount(3, 1, 10);
+		customerService.creditAmount(2, 5, 1000);
 	}
 }

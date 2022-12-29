@@ -20,7 +20,7 @@ public class CustomerSaveController {
 		customer.setCno(1234567890);
 		
 		//Enter the aadhar card number
-		customer.setAddharCardNo(297978920041l);
+		customer.setAddharCardNo(297978920045l);
 
 		CustomerService customerService =new CustomerService();
 		

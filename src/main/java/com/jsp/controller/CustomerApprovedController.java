@@ -8,10 +8,10 @@ public class CustomerApprovedController {
 		
 		//For approved all customers
 		//Enter the bankManagerId
-		bankManagerService.approvedCustomers(4);
+//		bankManagerService.approvedCustomers(4);
 		
 		//For approved particular customer
 		//Enter the customerId and bankManagerId
-		bankManagerService.approvedCustomer(3, 3);
+		bankManagerService.approvedCustomer(6, 3);
 	}
 }

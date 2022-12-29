@@ -14,11 +14,11 @@ public class SaveBankAccountController {
 		bankAccount.setIfsc_code("UNION1234");
 		
 		//Enter the amount
-		bankAccount.setBalance(5000);
+		bankAccount.setBalance(500);
 		
 		CustomerService customerService=new CustomerService();
 		
 		//Enter the bankAccount and customerId
-		customerService.saveBankAccount(bankAccount,2);
+		customerService.saveBankAccount(bankAccount,6);
 	}
 }
